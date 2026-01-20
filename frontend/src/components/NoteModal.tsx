@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { api } from '../services/api';
 import type { Note, Category } from '../services/api';
-import { PlusIcon } from '@heroicons/react/24/outline';
 
 interface NoteModalProps {
     isOpen: boolean;
@@ -15,10 +13,6 @@ export const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, n
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
-
-    // New category state
-    const [isAddingCategory, setIsAddingCategory] = useState(false);
-    const [newCategoryName, setNewCategoryName] = useState('');
 
     useEffect(() => {
         if (noteToEdit) {
@@ -45,28 +39,6 @@ export const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, n
             setSelectedCategories(selectedCategories.filter(c => c.id !== category.id));
         } else {
             setSelectedCategories([...selectedCategories, category]);
-        }
-    };
-
-    const handleCreateCategory = async () => {
-        if (!newCategoryName.trim()) return;
-        try {
-            const newCat = await api.createCategory(newCategoryName);
-            // We assume parent component will refresh categories or we can just add it locally
-            // But since we can't update parent state easily from here without callback, 
-            // and we passed allCategories as prop, we depend on parent.
-            // Ideally onSave should handle creating, but let's keep it simple:
-            // We'll just verify current flow. To make it smooth, maybe we need a callback for onCategoryCreate
-            // For now, let's just alert strictly or better: add to selected locally and hope parent refreshes on next fetch
-            // Actually, let's trigger a collection refresh via a prop if possible, but simplest is just:
-            // User adds category -> We call API -> We toggle it as selected (using the returned ID) -> We rely on parent to update the list later?
-            // No, we need it in the list now. 
-            // Let's just create it and force select it, but it won't show in the list unless we add it to allCategories?
-            // I'll skip implementing 'Create Category inside Modal' for now unless simple.
-            // I'll stick to 'Select existing'.
-            // Wait, requirement: "As a user, I want to be able to add/remove categories to notes."
-        } catch (e) {
-            console.error(e);
         }
     };
 
