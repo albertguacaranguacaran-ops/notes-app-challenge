@@ -1,5 +1,5 @@
 import React from 'react';
-import { Note } from '../services/api';
+import type { Note } from '../services/api';
 import { ArchiveBoxIcon, TrashIcon, ArrowUturnLeftIcon, PencilIcon, TagIcon } from '@heroicons/react/24/outline';
 
 interface NoteCardProps {

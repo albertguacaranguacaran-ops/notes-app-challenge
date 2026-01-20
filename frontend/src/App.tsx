@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { api, Note, Category } from './services/api';
+import { api } from './services/api';
+import type { Note, Category } from './services/api';
 import { NoteCard } from './components/NoteCard';
 import { NoteModal } from './components/NoteModal';
 import { PlusIcon, ArchiveBoxIcon, DocumentTextIcon, TagIcon, TrashIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 
 function App() {
+  console.log('App rendering');
   const [notes, setNotes] = useState<Note[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isArchivedView, setIsArchivedView] = useState(false);

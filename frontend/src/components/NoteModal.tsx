@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Note, Category, api } from '../services/api';
+import { api } from '../services/api';
+import type { Note, Category } from '../services/api';
 import { PlusIcon } from '@heroicons/react/24/outline';
 
 interface NoteModalProps {
@@ -114,8 +115,8 @@ export const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, n
                                     type="button"
                                     onClick={() => toggleCategory(cat)}
                                     className={`px-3 py-1 rounded-full text-sm border transition-colors ${selectedCategories.find(c => c.id === cat.id)
-                                            ? 'bg-blue-100 text-blue-700 border-blue-200'
-                                            : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                        ? 'bg-blue-100 text-blue-700 border-blue-200'
+                                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                                         }`}
                                 >
                                     {cat.name}
