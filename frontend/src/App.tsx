@@ -3,7 +3,7 @@ import { api } from './services/api';
 import type { Note, Category } from './services/api';
 import { NoteCard } from './components/NoteCard';
 import { NoteModal } from './components/NoteModal';
-import { PlusIcon, ArchiveBoxIcon, DocumentTextIcon, TagIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, ArchiveBoxIcon, DocumentTextIcon, TagIcon, TrashIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 
 function App() {
@@ -12,6 +12,7 @@ function App() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isArchivedView, setIsArchivedView] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>(undefined);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | undefined>(undefined);
@@ -45,7 +46,7 @@ function App() {
   const handleSave = async (title: string, content: string, noteCategories: Category[]) => {
     try {
       // Map full category objects to Partial<Category> as expected by API
-      const catsForApi = noteCategories.map(c => ({ id: c.id }));
+      const catsForApi = noteCategories.map(c => ({ id: c.id })) as any;
 
       if (editingNote) {
         await api.updateNote(editingNote.id, { title, content, categories: catsForApi });
@@ -104,17 +105,45 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 fixed h-full flex flex-col overflow-y-auto z-10">
-        <div className="p-6">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+      {/* Mobile Header */}
+      <div className="md:hidden fixed top-0 w-full bg-white border-b border-gray-200 z-20 px-4 py-3 flex items-center justify-between">
+        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          My Notes
+        </h1>
+        <button onClick={() => setIsSidebarOpen(true)} className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+          <Bars3Icon className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-30"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={clsx(
+        "bg-white border-r border-gray-200 fixed h-full flex flex-col overflow-y-auto z-40 transition-transform duration-300 md:translate-x-0 md:static md:w-64 w-[280px]",
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        <div className="p-6 flex justify-between items-center">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent hidden md:block">
             My Notes
           </h1>
+          <h1 className="text-2xl font-bold text-gray-800 md:hidden">
+            Menu
+          </h1>
+          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden p-1 bg-gray-100 rounded-full">
+            <XMarkIcon className="w-5 h-5 text-gray-600" />
+          </button>
         </div>
 
         <nav className="flex-1 px-4 space-y-6">
           <div className="space-y-2">
             <button
-              onClick={() => { setIsArchivedView(false); setSelectedCategory(undefined); }}
+              onClick={() => { setIsArchivedView(false); setSelectedCategory(undefined); setIsSidebarOpen(false); }}
               className={clsx(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium",
                 !isArchivedView && !selectedCategory ? "bg-blue-50 text-blue-700 shadow-sm" : "text-gray-600 hover:bg-gray-50"
@@ -125,7 +154,7 @@ function App() {
             </button>
 
             <button
-              onClick={() => { setIsArchivedView(true); setSelectedCategory(undefined); }}
+              onClick={() => { setIsArchivedView(true); setSelectedCategory(undefined); setIsSidebarOpen(false); }}
               className={clsx(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium",
                 isArchivedView ? "bg-amber-50 text-amber-700 shadow-sm" : "text-gray-600 hover:bg-gray-50"
@@ -147,7 +176,7 @@ function App() {
               {categories.map(cat => (
                 <button
                   key={cat.id}
-                  onClick={() => { setSelectedCategory(cat.id); setIsArchivedView(false); }}
+                  onClick={() => { setSelectedCategory(cat.id); setIsArchivedView(false); setIsSidebarOpen(false); }}
                   className={clsx(
                     "w-full flex items-center justify-between gap-3 px-4 py-2 rounded-lg transition-all text-sm group",
                     selectedCategory === cat.id ? "bg-indigo-50 text-indigo-700 font-medium" : "text-gray-600 hover:bg-gray-50"
@@ -171,8 +200,8 @@ function App() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 p-8">
-        <header className="flex justify-between items-center mb-8">
+      <main className="flex-1 md:w-auto w-full p-4 md:p-8 mt-14 md:mt-0 transition-all">
+        <header className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
           <div>
             <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
               {isArchivedView ? 'Archived Notes' : (selectedCategory ? categories.find(c => c.id === selectedCategory)?.name : 'My Notes')}

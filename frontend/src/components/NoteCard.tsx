@@ -11,7 +11,7 @@ interface NoteCardProps {
 
 export const NoteCard: React.FC<NoteCardProps> = ({ note, onArchive, onDelete, onEdit }) => {
     return (
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow flex flex-col h-full">
+        <div className="bg-white p-6 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] ring-1 ring-gray-100 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:ring-blue-100/50 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
             <h3 className="text-lg font-semibold text-gray-800 mb-2">{note.title}</h3>
             <p className="text-gray-600 whitespace-pre-wrap mb-4 line-clamp-4 flex-grow">{note.content}</p>
 
