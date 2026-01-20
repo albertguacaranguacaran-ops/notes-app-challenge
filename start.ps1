@@ -6,16 +6,16 @@ Push-Location backend
 if (-not (Test-Path "node_modules")) {
     npm install
 }
-Start-Process npm -ArgumentList "run start:dev" -NoNewWindow
+Start-Process npm.cmd -ArgumentList "run start:dev" -NoNewWindow
 Pop-Location
 
 # Frontend Setup
 Write-Host "🔹 Configurando Frontend..." -ForegroundColor Cyan
 Push-Location frontend
 if (-not (Test-Path "node_modules")) {
-    npm install
+    npm.cmd install
 }
-Start-Process npm -ArgumentList "run dev" -NoNewWindow
+Start-Process npm.cmd -ArgumentList "run dev" -NoNewWindow
 Pop-Location
 
 Write-Host "✅ Aplicación iniciada!" -ForegroundColor Green
